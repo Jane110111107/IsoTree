@@ -1,0 +1,39 @@
+model:
+
+sets:
+   pack/@file('lingoinput.txt')/: goods;
+   bin/@file('lingoinput.txt')/: box;
+   links(pack,bin): w, c;
+endsets
+
+data:
+   goods = @file('lingoinput.txt');
+   box = @file('lingoinput.txt');
+enddata
+
+min = @sum(links:w); 
+
+m = 0.35;
+
+@for(pack(I):
+@sum(bin(J): c(I,J)) >= (1-m)*goods(I));
+@for(pack(I):
+@sum(bin(J): c(I,J)) <= (1+m)*goods(I));
+
+@for(bin(J):
+@sum(pack(I): c(I,J)) >= (1-m)*box(J));
+@for(bin(J):
+@sum(pack(I): c(I,J)) <= (1+m)*box(J));
+
+@for(links:c>=0);
+@for(bin(J):
+@for(pack(I):c(I,J)<=(1+m)*goods(I)));
+
+@for(links: w=@if(c#gt#0,1,0));
+
+data:
+@text('lingooutput.txt')=c;
+enddata
+
+END
+

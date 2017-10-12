@@ -1,0 +1,109 @@
+  LINGO/LNX64 13.0.2.15 (15 Feb 12)
+ 
+  LINDO API 7.0.1.421 (Feb  9 2012 18:15:24)
+ 
+  Copyright (C) 2005-2011 LINDO Systems Inc. Licensed material,
+  all rights reserved. Copying except as authorized in license
+  agreement is prohibited.
+ 
+  License location: /home/jane/bio_app/lingo13/license/linux64/lndlng13.lic
+ 
+  Eval Use Only
+ 
+  Licensed for educational use only.
+  Branch-and-bound solver enabled.
+  Nonlinear solver enabled.
+  Barrier solver enabled.
+  Global solver enabled.
+  Integer solver enabled.
+  Stochastic solver enabled.
+  Conic solver enabled.
+ 
+ 
+   Parameter        Old Value     New Value
+    ECHOIN             0             1
+ 
+:  TAKE mip2.lng
+: model:
+? sets:
+?    pack/@file('lingoinput.txt')/: goods;
+?    bin/@file('lingoinput.txt')/: box;
+?    links(pack,bin): w, c;
+? endsets
+? data:
+?    goods = @file('lingoinput.txt');
+?    box = @file('lingoinput.txt');
+?    w = @file('lingow.txt');
+? enddata
+? min = @sum(pack(I):(goods(I)-@sum(bin(J):c(I,J)))*(goods(I)-@sum(bin(J):c(I,J)))) +
+? m = 0.35;
+? @for(pack(I):
+? @sum(bin(J): c(I,J)) >= (1-m)*goods(I));
+? @for(pack(I):
+? @sum(bin(J): c(I,J)) <= (1+m)*goods(I));
+? @for(bin(J):
+? @sum(pack(I): c(I,J)) >= (1-m)*box(J));
+? @for(bin(J):
+? @sum(pack(I): c(I,J)) <= (1+m)*box(J));
+? @for(links:c>=0);
+? @for(bin(J):
+? @for(pack(I):c(I,J)<=(1+m)*goods(I)));
+? @for(links: 10000000*w >= c);
+? data:
+? @text('lingooutput.txt')=c;
+? enddata
+? END
+:  GO
+  Compiling model ...
+  Structural analysis, pass 1 ...
+  Scalarizing model ...
+  Generating nonzero matrix ...
+  Solving...
+ 
+      Iters   Steps  Active     Status     Objective         Bound
+          1       1      -1    UNKNOWN     0.100E+31    -0.100+308
+         44       6      -1  LOCAL_OPT      0.00        -0.100+308
+ 
+  Computing duals, step 1...
+  Computing duals, step 2...
+ 
+  Local optimal solution found.
+  Objective value:                              0.000000
+  Infeasibilities:                              0.000000
+  Extended solver steps:                               5
+  Total solver iterations:                            44
+ 
+  Running output operations ...
+ 
+  Model Class:                                       NLP
+ 
+  Total variables:                      1
+  Nonlinear variables:                  1
+  Integer variables:                    0
+ 
+  Total constraints:                    8
+  Nonlinear constraints:                1
+ 
+  Total nonzeros:                       8
+  Nonlinear nonzeros:                   1
+ 
+ 
+                                Variable           Value        Reduced Cost
+                                       M       0.3500000            0.000000
+                              GOODS( A1)        1.175680            0.000000
+                                BOX( B1)        1.175680            0.000000
+                              W( A1, B1)        1.000000            0.000000
+                              C( A1, B1)        1.175680            0.000000
+ 
+                                     Row    Slack or Surplus      Dual Price
+                                       1        0.000000           -1.000000
+                                       2        0.000000            0.000000
+                                       3       0.4114880            0.000000
+                                       4       0.4114880            0.000000
+                                       5       0.4114880            0.000000
+                                       6       0.4114880            0.000000
+                                       7        1.175680            0.000000
+                                       8       0.4114880            0.000000
+                                       9        9999999.            0.000000
+ 
+:  QUIT

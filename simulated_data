@@ -1,2 +1,4 @@
 We generated total of 21 datasets of simulated pair-end reads from 100 isoform transcripts（stored in ref_trans.fa and ref_trans.gtf）originated from 41 different genes in chromosome 1 (CRCh38.83, NCBI) using FluxSimulator. Each simulated dataset contains 0.1 million paired-end reads. For example, sim100bp_1.fa and sim100bp_2.fa contain 0.1 million 
 paired-end reads with length 100bp.
+
+Download link http://pan.baidu.com/s/1misseHa.

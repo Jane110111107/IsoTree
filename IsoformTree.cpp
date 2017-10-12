@@ -61,7 +61,7 @@ string usage() {
 		<< "  -o <string>: name of drectory for output, default: ./Isotree_Out/ " << endl
 		<< "  -h : help information. " << endl
 		<< "  --min_same_len <int>: the minimum overlap length, default k. " << endl
-		<< "  --max_read_len <int>: the maximum overlap length, default read_length -1. " << endl
+		<< "  --max_same_len <int>: the maximum overlap length, default read_length -1. " << endl
 		<< "  --tolerance_value <float>: the value of epsilon, default 0.35" << endl
 		<< "  --min_trans_len <int>: the minimum length of transcript, default 200." << endl
 		<< "  --min_exon_len <int>: the minimum length of exon, default 80. " << endl

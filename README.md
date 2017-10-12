@@ -1,16 +1,16 @@
 # IsoTree
 IsoTree: A New Framework for De Novo Transcriptome Assembly from RNA-seq Reads
 
-********************Description************************
+** Description **
 
 IsoTree is an efficient de novo trascriptome assembler for RNA-Seq data. It can assemble transcripts from RNA-Seq reads (in fasta format). Unlike most of de novo assembly methods that build de Bruijn graph or splicing graph by connecting k-mers which are sets of overlapping substrings generated from reads, IsoTree constructs splicing graph by connecting reads directly. For each splicing graph, IsoTree applies an iterative scheme of mixed integer linear program to build a prefix tree, called isoform tree. Each path from the root node of the isoform tree to a leaf node represents a plausible transcript candidate which will be pruned based on the information of pair-end reads. 
 
-**********************Install**************************
+** Install ** 
 
 $gcc -I /path/to/boost/include -o isotree GeneralSet.cpp KmerUtility.cpp ReadUtility.cpp ReadHash.cpp TreeStruct.cpp SplicingGraph.cpp IsoTree.cpp -pthread -lirc -lstdc++ -limf
 $export PATH=/path/to/isotree:$PATH
 
-***********************Uasge***************************
+** Uasge **
 
 quik start:
 

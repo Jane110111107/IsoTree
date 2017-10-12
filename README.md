@@ -14,7 +14,7 @@ $export PATH=/path/to/isotree:$PATH
 
 quik start:
 
-$isotree -t 1 -2 100 -k 20 --left sim100bp_1.fa --right sim100bp_2.fa --max_same_len 99 --min_same_len 20 --fr_strand 1
+$isotree -t 2 -l 100 -k 20 --left sim100bp_1.fa --right sim100bp_2.fa --max_same_len 99 --min_same_len 20 --fr_strand 1
 (where sim100bp_1.fa and sim100bp_2.fa are simulated paired-end reads ())
 
 detail:

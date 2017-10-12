@@ -39,4 +39,18 @@ If single end reads:
   --mode <int>: method of constructing splicing graph. 1: both trunk extend and branch extend, 2: only trunk extend, default 1. 
   --double_stranded_mode: indicate the pair-end read is double stranded mode" << endl
 	--fr_strand <int>: only used for pair-end reads. 1: --1--> <--2--  2: <--1-- --2-->  3: --1--> --2--> or <--1-- <--2--, default 1.
-		
+
+
+** Output **
+
+The IsoTree will output a fasta file named transcriptome.fa that contains all the possible transcripts assembled by IsoTree.
+
+
+** Contact **
+
+If you have any questions or concerns, please send email to zhaojin_cc@163.com.
+	
+
+** Simulated data **
+
+We generated total of 21 datasets of simulated pair-end reads from 100 isoform transcripts（stored in ref_trans.fa and ref_trans.gtf）originated from 41 different genes in chromosome 1 (CRCh38.83, NCBI) using FluxSimulator. Each simulated dataset contains 0.1 million paired-end reads. For example, sim100bp_1.fa and sim100bp_2.fa contain 0.1 million paired-end reads with length 100bp.

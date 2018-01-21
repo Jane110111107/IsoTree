@@ -65,7 +65,7 @@ string usage() {
 		<< "  --tolerance_value <float>: the value of epsilon, default 0.35" << endl
 		<< "  --min_trans_len <int>: the minimum length of transcript, default 200." << endl
 		<< "  --min_exon_len <int>: the minimum length of exon, default 80. " << endl
-        << "  --mode <int>: method of constructing splicing graph. 1: both trunk extend and branch extend, 2: only trunk extend, default 1. " << endl
+        << "  --mode <int>: method of constructing splicing graph. 1: both trunk extend and branch extend, 1: only trunk extend, default 2. " << endl
 		<< "  --double_stranded_mode: indicate the pair-end read is double stranded mode" << endl
 		<< "  --fr_strand <int>: only used for pair-end reads. 1: --1--> <--2--  2: <--1-- --2-->  3: --1--> --2--> or <--1-- <--2--, default 1. " << endl
 		<< "===============================================================================" << endl

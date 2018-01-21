@@ -11,8 +11,13 @@
 using namespace std;
 
 
-void load_reads(string file,bool rev);
+typedef vector<unsigned long long> read_int_type;
 
+
+void load_reads(string file, vector<string>& input_data, bool rev);
+void delete_error_reads(vector<string>& input_data);
+int count_reads_file(string file);
+read_int_type get_read_int_type(const string& read);
 /*
 class InfoReadset  {
 

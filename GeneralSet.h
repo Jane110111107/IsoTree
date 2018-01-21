@@ -1,8 +1,3 @@
-// This file was modified from a file named common.h in Binpack.
-// The original copyright info is Copyright (c) 2013, The Broad Institute, Inc.
-// Distributed under the  Distributed under Binpack Software LICENSE.
-
-
 
 #ifndef GENERALSET_H
 #define GENERALSET_H
@@ -19,6 +14,7 @@ using namespace std;
 
 extern vector<int> data_tag;
 extern vector<string> data;
+extern vector<bool> data_used;
 extern int max_read_id;
 extern double g_max_mapped_error;
 extern int g_mode;

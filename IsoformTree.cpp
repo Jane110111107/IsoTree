@@ -3,6 +3,7 @@
 #include "GeneralSet.h"
 #include "SplicingGraph.h"
 #include "ReadUtility.h"
+#include "ReadHash.h"
 #include <iostream>
 #include <ctime>
 #include <errno.h>
@@ -57,11 +58,10 @@ string usage() {
 		<< " If single end reads: " << endl
 		<< "  -singlefile <string>: reads file name (.fasta). " << endl
 		<< " ** Options: **" <<endl
-		<< "  -k <int>: length of kmer, default 25. " << endl
-		<< "  -o <string>: name of drectory for output, default: ./Isotree_Out/ " << endl
+		<< "  -k <int>: length of kmer, default 20. " << endl
 		<< "  -h : help information. " << endl
 		<< "  --min_same_len <int>: the minimum overlap length, default k. " << endl
-		<< "  --max_same_len <int>: the maximum overlap length, default read_length -1. " << endl
+		<< "  --max_read_len <int>: the maximum overlap length, default read_length -1. " << endl
 		<< "  --tolerance_value <float>: the value of epsilon, default 0.35" << endl
 		<< "  --min_trans_len <int>: the minimum length of transcript, default 200." << endl
 		<< "  --min_exon_len <int>: the minimum length of exon, default 80. " << endl
@@ -162,6 +162,122 @@ int parse_options(int argc, char* argv[]) {
 	}
 
 
+	if (g_fr_strand != 1 && g_fr_strand != 2) {
+		cout << "Error: --fr_strand can only be 1 or 2" << endl;
+		exit(1);
+	}
+
+	return 0;
+
+}
+
+
+
+
+void write_all_splicing_graph(KmerHash& kmer_hash){
+
+	vector<int> seeds;
+
+	ReadHash read_hash;
+	read_hash.get_read_hash();	
+	if (!data.empty()) {
+
+		g_read_length = data[0].length();	
+		kmer_hash.get_hash(seeds);
+		//kmer_hash.get_hash();			
+		//kmer_hash.delete_errous_kmer(g_min_ratio_non_error);
+		//kmer_hash.prune_hash(g_min_kmer_coverage, g_min_kmer_entropy);
+		read_hash.get_seeds(seeds);
+		cout << "There are total of " << seeds.size() << " seeds." << endl;
+	} else {
+		cout << "Building kmer hash failed." << endl;
+		exit(1);
+	}
+
+	const string& transcriptome_name = "transcriptome.fa";
+	fstream transcriptome_file;
+	transcriptome_file.open(transcriptome_name.c_str(), fstream::out);
+	int gene_id = 0;
+	if (!transcriptome_file.is_open()) {
+		cout <<"File " << transcriptome_name.c_str() <<" can't be opened. " << endl;
+		exit(1);
+	}
+
+	size_t splicing_graph_id = 0;
+	for (unsigned int i = 0; i < seeds.size(); ++i) {
+
+		if (data_tag[seeds[i]] != -5) 
+			continue;
+
+		SplicingGraph splicing_graph;			
+		cout << "Building splicing graph" << splicing_graph_id << " ..." << endl;
+		vector<pair<string,float> > transcripts;		
+		if (splicing_graph.build(read_hash, kmer_hash, seeds[i], transcripts)) {
+	
+			int sg_num = 0;
+
+			if (transcripts.size() == 0)
+				continue;
+			for (size_t k =0; k < transcripts.size(); k++){				
+				sg_num++;
+				gene_id++;
+				transcriptome_file<<">trans" << gene_id << "_sg" << splicing_graph_id << "_" << sg_num << "  len = " << transcripts[k].first.length() << "  cov = " << transcripts[k].second << "  sequence =" << endl;
+				transcriptome_file << transcripts[k].first <<endl;
+			}				
+			if (sg_num > 0) {
+				cout << "Building splicing graph " << splicing_graph_id << " succeed!" << " total node sum: " << splicing_graph.get_node_sum() << endl;
+				splicing_graph_id++;
+			}	
+
+		} 
+		cout << "Done " << i << ":" << seeds.size() << endl;
+	}
+	//cout << "have done 100%" << endl;
+	transcriptome_file.close();			
+	cout << splicing_graph_id << " graphs have been built." << endl;
+}
+
+
+int main(int argc, char* argv[]){
+
+	time_t s_time = time(NULL);
+	vector<string> input_data;
+	int parse_ret = parse_options(argc,argv);
+	if (parse_ret)
+		return parse_ret;
+	
+	if (g_is_paired_end) {
+		//const int file_size = count_reads_file(g_left_file);
+		//data.reserve(2*file_size+1);
+//cout << data_tag.capacity() << endl;
+		//data_tag.reserve(2*file_size+1);
+//cout << data_tag.capacity() << endl;
+		if (g_double_stranded_mode) {								
+			load_reads(g_left_file,input_data, false);								
+			load_reads(g_right_file,input_data,false);               
+		} else {              
+			if (g_fr_strand == 1) {//--1-->  <--2--				
+				load_reads(g_left_file, input_data, false);				
+				load_reads(g_right_file, input_data, true);
+            }                	
+			if (g_fr_strand == 2) {//<--1-- --2-->				
+				load_reads(g_left_file, input_data, true);				
+				load_reads(g_right_file,input_data, false);               	 
+			}
+			if (g_fr_strand == 3) {//--1--> --2-->  or --2--> --1-->				
+				load_reads(g_left_file, input_data, false);				
+				load_reads(g_right_file, input_data, false);              	
+			}               
+		}
+
+	} else {
+		const int file_size = count_reads_file(g_reads_file);
+		//data.reserve(file_size+1);
+		//data_tag.reserve(file_size+1);
+		load_reads(g_reads_file,input_data, false);
+
+	}
+	g_read_length = input_data[0].length();
 	if (g_max_same_len == 0) {
 		g_max_same_len = g_read_length - 1;
 	}
@@ -186,126 +302,7 @@ int parse_options(int argc, char* argv[]) {
 		g_max_same_len = g_kmer_length;
 	}
 
-	if (g_fr_strand != 1 && g_fr_strand != 2) {
-		cout << "Error: --fr_strand can only be 1 or 2" << endl;
-		exit(1);
-	}
-
-	return 0;
-
-}
-
-
-
-
-void write_all_splicing_graph(KmerHash& kmer_hash){
-
-	vector<int> seeds;	
-	if (!data.empty()) {
-		g_read_length = data[0].length();
-		kmer_hash.get_hash(seeds);				
-		//kmer_hash.delete_errous_kmer(g_min_ratio_non_error);
-		//kmer_hash.prune_hash(g_min_kmer_coverage, g_min_kmer_entropy);
-	} else {
-		cout << "Building kmer hash failed." << endl;
-		exit(1);
-	}
-
-	if (seeds.empty()){
-		cout << "No seeds available!" << endl;
-		exit(1);
-	}
-	
-	const string& transcriptome_name = "transcriptome.fa";
-	fstream transcriptome_file;
-	transcriptome_file.open(transcriptome_name.c_str(), fstream::out);
-	int gene_id = 0;
-	if (!transcriptome_file.is_open()) {
-		cout <<"File " << transcriptome_name.c_str() <<" can't be opened. " << endl;
-		exit(1);
-	}
-
-	size_t splicing_graph_id = 0;
-	for (unsigned int i = 0; i < seeds.size(); i++) {
-
-		if (data_tag[seeds[i]] != -1) 
-			continue;
-
-		SplicingGraph splicing_graph;			
-		cout << "Building splicing graph" << splicing_graph_id << " ..." << endl;		
-		if (splicing_graph.build(kmer_hash, seeds[i])) {
-			cout << "Topological sort..." << endl;
-			splicing_graph.topological_sort();
-			vector<pair<string,float> > transcripts;
-			splicing_graph.get_transcripts(kmer_hash, transcripts);
-			int sg_num = 0;
-
-
-			//int sum_data = 0;//	
-			//for (int i =0; i < data_tag.size(); i++)//		
-				//sum_data = data_tag[i] + sum_data;//				
-			//cout << sum_data << endl;//
-			
-			if (transcripts.size() == 0)
-				continue;
-			for (size_t k =0; k < transcripts.size(); k++){				
-				sg_num++;
-				gene_id++;
-				transcriptome_file<<">trans" << gene_id << "_sg" << splicing_graph_id << "_" << sg_num << "  len = " << transcripts[k].first.length() << "  cov = " << transcripts[k].second << "  sequence =" << endl;
-				transcriptome_file << transcripts[k].first <<endl;
-			}				
-			cout << "Building splicing graph " << splicing_graph_id << " succeed!" << " total node sum: " << splicing_graph.get_node_sum() << endl;
-			float done_current = 100 * i / seeds.size();
-			cout << "have done" << setiosflags(ios::fixed) << setprecision(2) << done_current << "%" << endl;
-			splicing_graph_id++;	
-
-		} 
-
-	}
-	cout << "have done 100%" << endl;
-	transcriptome_file.close();			
-	cout << splicing_graph_id << " graphs have been built." << endl;
-}
-
-
-int main(int argc, char* argv[]){
-
-	time_t s_time = time(NULL);
-	data.clear();
-	data_tag.clear();
-	int parse_ret = parse_options(argc,argv);
-	if (parse_ret)
-		return parse_ret;
-	
-	if (g_is_paired_end) {
-
-		if (g_double_stranded_mode) {								
-			load_reads(g_left_file,false);								
-			load_reads(g_right_file,false);               
-		} else {              
-			if (g_fr_strand == 1) {//--1-->  <--2--				
-				load_reads(g_left_file, false);				
-				load_reads(g_right_file, true);
-            }                	
-			if (g_fr_strand == 2) {//<--1-- --2-->				
-				load_reads(g_left_file, true);				
-				load_reads(g_right_file, false);               	 
-			}
-			if (g_fr_strand == 3) {//--1--> --2-->  or --2--> --1-->				
-				load_reads(g_left_file, false);				
-				load_reads(g_right_file, false);              	
-			}               
-		}
-
-		max_read_id = data_tag.size() / 2;
-
-	} else {
-
-		load_reads(g_reads_file,false);
-		max_read_id = data_tag.size();
-
-	}
-
+	delete_error_reads(input_data);
 	KmerHash kmer_hash(g_kmer_length);
 	write_all_splicing_graph(kmer_hash);
 	time_t e_time = time(NULL);

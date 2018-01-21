@@ -36,6 +36,17 @@ private:
 	typedef  boost::unordered_map<kmer_int_type, vector<int> > kmer_hash_type;
 	typedef  boost::unordered_map<kmer_int_type, vector<int> >::iterator kmer_hash_type_iterator;
 	typedef  boost::unordered_map<kmer_int_type, vector<int> >::const_iterator kmer_hash_type_const_iterator;
+
+	class kmer_sorter_by_count_desc_t {
+	public:
+		kmer_sorter_by_count_desc_t(KmerHash& k) : kmer_hash_(k) {};
+		bool operator() (const kmer_int_type& i, const kmer_int_type& j) {
+			return ( (kmer_hash_[i].size() > kmer_hash_[j].size()) || (kmer_hash_[i].size() == kmer_hash_[j].size() && i > j) );
+		}
+	private:
+		KmerHash& kmer_hash_;
+	};
+
 	kmer_hash_type kmer_hash;
 	int kmer_length;
 
@@ -58,7 +69,9 @@ public:
 	bool exists(const string& kmer); 
 	size_t kmer_abundance(kmer_int_type kmer);
 	size_t kmer_abundance(const string& kmer);
+	void get_seed(vector<int>& seeds);
 	void get_hash(vector<int>& seeds);
+	void get_hash();
 	void get_hash_from_graphdata(vector<string>& mdata);
 	bool remove (kmer_int_type kmer);
 	bool delete_errous_kmer(float min_ratio_non_error);

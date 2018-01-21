@@ -32,7 +32,7 @@ unsigned char _base_to_int [256] = {
 
 bool contains_non_gatc (string kmer) {
 
-	for(unsigned int i =0; i < kmer.size(); i++) {
+	for(unsigned int i =0; i < kmer.size(); ++i) {
 
 		unsigned char c = kmer[i];
 
@@ -114,7 +114,7 @@ string kmer_to_string (kmer_int_type kmer, unsigned int kmer_length) {
 
 	for (unsigned int i =1; i <= kmer_length; i++){
 
-		int base_num = kmer & 3; 
+		int base_num = kmer & 3ll; 
 		kmerstring[kmer_length-i] = _int_to_base [base_num];
 		kmer = kmer >> 2;
 	
@@ -165,7 +165,7 @@ float compute_entropy (kmer_int_type kmer, unsigned int kmer_length){
 
 	for (unsigned int i = 0; i < kmer_length; i++) {
 
-		int c = kmer & 3;
+		int c = kmer & 3ll;
 		kmer = kmer >> 2;
 		count [c]++;
 
@@ -251,9 +251,9 @@ kmer_int_type revcomp_val (kmer_int_type kmer, unsigned int kmer_length) {
 	kmer_int_type rev_kmer = 0;
 	kmer = ~kmer;
 
-	for(unsigned int i=0; i < kmer_length; i++) {
+	for(unsigned int i=0; i < kmer_length; ++i) {
 
-		int base = kmer & 3ll;
+		int base = kmer & 3;
 		rev_kmer = rev_kmer << 2;
 		rev_kmer += base;
 		kmer = kmer >> 2;

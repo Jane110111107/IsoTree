@@ -1130,7 +1130,7 @@ bool SplicingGraph::forward_extend(ReadHash& read_hash, KmerHash& kmer_hash, str
 							break;
 						int compatible_len = get_compatible_len(stop_seq, data[r_d].substr(g_read_length-g_min_same_len+1));
 						if (compatible_len != 0){
-							contig = contig.substr(0, contig.length()-i) + data[r_d].substr(0, g_read_length-compatible_len);
+							contig = contig.substr(0, contig.length()-start-g_kmer_length) + data[r_d].substr(0, g_read_length-compatible_len);
 							data_tag[r_d] = color_tag;
 							return true;
 						}
@@ -1157,7 +1157,7 @@ bool SplicingGraph::forward_extend(ReadHash& read_hash, KmerHash& kmer_hash, str
 				if (start != string::npos && data[r_d].substr(0,start+g_kmer_length) == contig.substr(contig.length()-start-g_kmer_length)) {
 					int compatible_len = get_compatible_len(stop_seq, data[r_d].substr(g_read_length-g_min_same_len+1));
 					if (compatible_len != 0){
-						contig = contig.substr(0, contig.length()-i) + data[r_d].substr(0, g_read_length-compatible_len);
+						contig = contig.substr(0, contig.length()-start-g_kmer_length) + data[r_d].substr(0, g_read_length-compatible_len);
 						data_tag[r_d] = color_tag;
 						return true;
 					}

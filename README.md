@@ -1,4 +1,4 @@
-# IsoTree
+form# IsoTree
 IsoTree: A New Framework for De Novo Transcriptome Assembly from RNA-seq Reads
 
 ** Description **
@@ -7,7 +7,7 @@ IsoTree is an efficient de novo trascriptome assembler for RNA-Seq data. It can 
 
 ** Install ** 
 $export PATH=/path/tp/boost/include:$PATH
-$g++ -o isotree GeneralSet.cpp KmerUtility.cpp KmerHash.cpp ReadUtility.cpp ReadHash.cpp TreeStruct.cpp SplicingGraph.cpp IsoTree.cpp
+$g++ -o isotree GeneralSet.cpp KmerUtility.cpp KmerHash.cpp ReadUtility.cpp ReadHash.cpp TreeStruct.cpp SplicingGraph.cpp IsoformTree.cpp
 $export PATH=/path/to/isotree:$PATH
 
 ** Uasge **

@@ -217,7 +217,7 @@ void write_all_splicing_graph(){
 				transcriptome_file << transcripts[k].first <<endl;
 			}				
 			if (sg_num > 0) {
-				cout << "Building splicing graph " << splicing_graph_id << " succeed!" << " total node sum: " << splicing_graph.get_node_sum() << endl;
+				//cout << "Building splicing graph " << splicing_graph_id << " succeed!" << " total node sum: " << splicing_graph.get_node_sum() << endl;
 				splicing_graph_id++;
 			}	
 

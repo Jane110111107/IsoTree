@@ -1,3 +1,8 @@
+// This file was modified from a file named common.h in Binpack.
+// The original copyright info is Copyright (c) 2013, The Broad Institute, Inc.
+// Distributed under the  Distributed under Binpack Software LICENSE.
+
+
 
 #include "GeneralSet.h"
 #include <cstring>
@@ -6,31 +11,32 @@
 
 using namespace std;
 
-
-vector<int> data_tag(15);
-vector<string> data(15);
-vector<bool> data_used(10);
-int max_read_id = 0;
+vector<string> data(3);
+vector<int> data_tag(3);
+vector<int> data_cov(3);
+vector<vector<int> > data_pair(3);
+int g_divide_left_pos = 0;
+int g_divide_right_pos = 0;
 double g_max_mapped_error = 0.02;
 int g_mode = 2;
-int g_kmer_length = 20;
 bool g_help = false;
 bool g_debug = false;
 bool g_is_paired_end = true; //false;
 int g_fr_strand = 1;
 bool g_double_stranded_mode = false; //false;
+int g_kmer_length = 20;
 int g_min_same_len = 20;
 int g_max_same_len = 0;
 int g_max_check_len = 200;
 int g_min_read_sum = 1;
-size_t g_read_length = 75;
+size_t g_read_length = 0;
 int g_tag_length = 5;
 int g_same_length = 10;
 double g_tolerance_value = 0.4;
 float g_min_pair_ratio = 0.5;
 
 // assemble
-int g_refine_check_len = 30;
+int g_refine_check_len = 100;
 int g_min_kmer_coverage = 1;//1;
 float g_min_kmer_entropy = 0.0f;
 float g_min_trans_cov = 2;
@@ -41,7 +47,7 @@ int g_min_average_coverage = 2;
 int g_min_reads_span_junction = 2;
 int g_min_reads_support_branch = 2;
 int g_min_anchor_length = 21;
-float g_min_ratio_non_error = 0.05f;
+float g_min_ratio_non_error = 0.04f;
 float g_min_ratio_branch = 0.1f;
 float g_min_ratio_welds = 0.04f;
 float g_min_ratio_in_out = 0.1f;
@@ -55,7 +61,7 @@ string g_left_file = "";
 string g_right_file = "";
 string out_dir = "./SplicingGraphs/"; //change by Jane
 string sg_list = "splicing_graph_name.list"; //change by Jane
-int g_interval = 20;
+int g_interval = 50;
 
 // path search
 int CPU = 6;

@@ -121,111 +121,50 @@ void KmerHash::get_seed(vector<int>& seeds) {
 	}
 }
 
-void KmerHash::get_hash() {
+void KmerHash::get_left_hash() {
 
 
 	size_t data_size = data.size();
 
-	cout << "constructing kmer hash ..." << endl;
+	cout << "constructing left kmer hash ..." << endl;
 
 	time_t start_time = time(NULL);
-	
-	if (data.empty())
-		return;
 
 	for (size_t i = 0; i < data_size; i++) {
 
 		const string& read = data[i];
-		const string& kmer1 = read.substr(0, kmer_length);
-		const string& kmer2 = read.substr(read.length()-kmer_length);
-		kmer_int_type kmer_int = kmer_to_int(kmer1);
+		const string& kmer = read.substr(0, kmer_length);
+		kmer_int_type kmer_int = kmer_to_int(kmer);
 		kmer_hash[kmer_int].push_back(i);
-		kmer_int = kmer_to_int(kmer2);
-		kmer_hash[kmer_int].push_back(i);
-	}
-
-	if (g_read_length < kmer_length + 3) {
-		time_t end_time = time(NULL);
-		cout << "Kmer Hash for three-generation reads has been constructed, total " << kmer_hash.size() << " kmers! (elapsed time: " << (end_time - start_time) << " s)" << endl;
-		return;
-	}
-
-	for (size_t i = 0; i < data_size; i++) {
-		const string& read = data[i];
-		for (size_t j = 1; j <= read.length()-kmer_length-1; j++) {
-			const string& kmer = read.substr(j, kmer_length);			
-			kmer_int_type kmer_int = kmer_to_int(kmer);
-			if (kmer_hash[kmer_int].size() > 0)
-				kmer_hash[kmer_int].push_back(i);
-		}
-
 	}
 
 	time_t end_time = time(NULL);
-	cout << "Kmer Hash has been constructed, total " << kmer_hash.size() << " kmers! (elapsed time: " << (end_time - start_time) << " s)" << endl;
+	cout << "Left Kmer Hash has been constructed, total " << kmer_hash.size() << " kmers! (elapsed time: " << (end_time - start_time) << " s)" << endl;
 
 }
 
 
+void KmerHash::get_right_hash() {
 
-void KmerHash::get_hash(vector<int>& seeds) {
 
-//*
 	size_t data_size = data.size();
 
-	cout << "constructing kmer hash ..." << endl;
+	cout << "constructing right kmer hash ..." << endl;
 
 	time_t start_time = time(NULL);
-	
-	if (data.empty())
-		return;
+
 	for (size_t i = 0; i < data_size; i++) {
 
 		const string& read = data[i];
-		bool is_seed = true;
-		for (size_t j = 0; j <= read.length()-kmer_length; j++) {
-
-			const string& kmer = read.substr(j, kmer_length);			
-			kmer_int_type kmer_int = kmer_to_int(kmer);
-
-			if (g_is_paired_end && g_double_stranded_mode) {
-				kmer_int_type kmer_rev = revcomp_val(kmer_int,kmer_length);
-				if (exists(kmer_rev)) {
-					kmer_hash[kmer_rev].push_back(i);
-					is_seed = false;
-				} else {
-					vector<int> info;
-                    info.push_back(i);
-			        kmer_hash[kmer_rev] = info;
-				}
-
-			}
-
-			if (exists(kmer_int)) {
-
-				kmer_hash[kmer_int].push_back(i);
-				is_seed = false;
-				continue;
-
-			}
-
-			vector<int> info;
-            info.push_back(i);
-			kmer_hash[kmer_int] = info;
-		}
-
-		if(is_seed) {
-				seeds.push_back(i);
-				data_tag[i] =-5;
-		}
+		const string& kmer = read.substr(read.length()-kmer_length);
+		kmer_int_type kmer_int = kmer_to_int(kmer);
+		kmer_hash[kmer_int].push_back(i);
 	}
 
 	time_t end_time = time(NULL);
-	cout << "Kmer Hash has been constructed, total " << kmer_hash.size() << " kmers! (elapsed time: " << (end_time - start_time) << " s)" << endl;
-	cout << "There are total of " << seeds.size() << " seed reads." << endl;
-//*/
-}
+	cout << "Right Kmer Hash has been constructed, total " << kmer_hash.size() << " kmers! (elapsed time: " << (end_time - start_time) << " s)" << endl;
 
+}
 
 void KmerHash::get_hash_from_graphdata(vector<string>& mdata) {
 

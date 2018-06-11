@@ -20,9 +20,9 @@
 
 
 using namespace std;
-typedef  boost::unordered_map<read_int_type, vector<int> > read_hash_type;
-typedef  boost::unordered_map<read_int_type, vector<int> >::iterator read_hash_type_iterator;
-typedef  boost::unordered_map<read_int_type, vector<int> >::const_iterator read_hash_type_const_iterator;
+typedef  boost::unordered_map<read_int_type, int > read_hash_type;
+typedef  boost::unordered_map<read_int_type, int >::iterator read_hash_iterator;
+typedef  boost::unordered_map<read_int_type, int >::const_iterator read_hash_const_iterator;
 
 
 
@@ -44,13 +44,15 @@ private:
 public:
 
 	ReadHash () { }
-	vector<int> & operator[](read_int_type read_int);
+	int & operator[](read_int_type read_int);
+	int find_read(read_int_type read_int){
+		int index = -1;
+		read_hash_iterator it = read_hash.find(read_int);
+		if (it != read_hash.end())
+			index = it -> second;
+		return index;
+	}
 	void get_read_hash();
-	void get_seeds(vector<int>& seeds);
-	int unused_sum(read_int_type read_int);
-	int unused_sum1(read_int_type read_int);
-	void return_unused(read_int_type read_int, vector<int>& unused_set);
-
 };
 
 

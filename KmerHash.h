@@ -71,7 +71,8 @@ public:
 	size_t kmer_abundance(const string& kmer);
 	void get_seed(vector<int>& seeds);
 	void get_hash(vector<int>& seeds);
-	void get_hash();
+	void get_left_hash();
+	void get_right_hash();
 	void get_hash_from_graphdata(vector<string>& mdata);
 	bool remove (kmer_int_type kmer);
 	bool delete_errous_kmer(float min_ratio_non_error);

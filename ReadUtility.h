@@ -18,6 +18,8 @@ void load_reads(string file, vector<string>& input_data, bool rev);
 void delete_error_reads(vector<string>& input_data);
 int count_reads_file(string file);
 read_int_type get_read_int_type(const string& read);
+void get_read_int_type(const string& read, read_int_type& read_int, const int vec_len);
+
 /*
 class InfoReadset  {
 

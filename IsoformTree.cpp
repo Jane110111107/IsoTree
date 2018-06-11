@@ -65,7 +65,7 @@ string usage() {
 		<< "  --tolerance_value <float>: the value of epsilon, default 0.35" << endl
 		<< "  --min_trans_len <int>: the minimum length of transcript, default 200." << endl
 		<< "  --min_exon_len <int>: the minimum length of exon, default 80. " << endl
-        << "  --mode <int>: method of constructing splicing graph. 1: both trunk extend and branch extend, 1: only trunk extend, default 2. " << endl
+        << "  --mode <int>: method of constructing splicing graph. 1: both trunk extend and branch extend, 2: only trunk extend, default 1. " << endl
 		<< "  --double_stranded_mode: indicate the pair-end read is double stranded mode" << endl
 		<< "  --fr_strand <int>: only used for pair-end reads. 1: --1--> <--2--  2: <--1-- --2-->  3: --1--> --2--> or <--1-- <--2--, default 1. " << endl
 		<< "===============================================================================" << endl
@@ -162,8 +162,8 @@ int parse_options(int argc, char* argv[]) {
 	}
 
 
-	if (g_fr_strand != 1 && g_fr_strand != 2) {
-		cout << "Error: --fr_strand can only be 1 or 2" << endl;
+	if (g_fr_strand != 1 && g_fr_strand != 2 && g_fr_strand != 3) {
+		cout << "Error: --fr_strand can only be 1, 2 or 3" << endl;
 		exit(1);
 	}
 
@@ -174,25 +174,14 @@ int parse_options(int argc, char* argv[]) {
 
 
 
-void write_all_splicing_graph(KmerHash& kmer_hash){
-
-	vector<int> seeds;
+void write_all_splicing_graph(){
 
 	ReadHash read_hash;
 	read_hash.get_read_hash();	
-	if (!data.empty()) {
-
-		g_read_length = data[0].length();	
-		kmer_hash.get_hash(seeds);
-		//kmer_hash.get_hash();			
-		//kmer_hash.delete_errous_kmer(g_min_ratio_non_error);
-		//kmer_hash.prune_hash(g_min_kmer_coverage, g_min_kmer_entropy);
-		read_hash.get_seeds(seeds);
-		cout << "There are total of " << seeds.size() << " seeds." << endl;
-	} else {
-		cout << "Building kmer hash failed." << endl;
-		exit(1);
-	}
+	KmerHash left_hash(g_kmer_length);
+	left_hash.get_left_hash();
+	KmerHash right_hash(g_kmer_length);
+	right_hash.get_right_hash();
 
 	const string& transcriptome_name = "transcriptome.fa";
 	fstream transcriptome_file;
@@ -204,21 +193,24 @@ void write_all_splicing_graph(KmerHash& kmer_hash){
 	}
 
 	size_t splicing_graph_id = 0;
-	for (unsigned int i = 0; i < seeds.size(); ++i) {
+	cout << "Assembling transcripts..." << endl;
+	const int data_size = data.size();
+	cout <<"Done 0 : " << data_size << endl;
+	for (unsigned int i = 0; i < data_size; ++i) {
 
-		if (data_tag[seeds[i]] != -5) 
+		if (data_tag[i] != -5 || data_cov[i] < 2) 
 			continue;
 
 		SplicingGraph splicing_graph;			
-		cout << "Building splicing graph" << splicing_graph_id << " ..." << endl;
+		//cout << "Building splicing graph" << splicing_graph_id << " ..." << endl;
 		vector<pair<string,float> > transcripts;		
-		if (splicing_graph.build(read_hash, kmer_hash, seeds[i], transcripts)) {
-	
+		if (splicing_graph.build(read_hash, left_hash, right_hash, i, transcripts)) {
+//if (splicing_graph_id == 22)
+//return;
 			int sg_num = 0;
-
 			if (transcripts.size() == 0)
 				continue;
-			for (size_t k =0; k < transcripts.size(); k++){				
+			for (int k =0; k < transcripts.size(); k++){				
 				sg_num++;
 				gene_id++;
 				transcriptome_file<<">trans" << gene_id << "_sg" << splicing_graph_id << "_" << sg_num << "  len = " << transcripts[k].first.length() << "  cov = " << transcripts[k].second << "  sequence =" << endl;
@@ -230,8 +222,10 @@ void write_all_splicing_graph(KmerHash& kmer_hash){
 			}	
 
 		} 
-		cout << "Done " << i << ":" << seeds.size() << endl;
+		printf("\033[1ADone \%d : %d \n", i, data_size);
+		//cout << "Done " << i << ":" << data.size() << endl;
 	}
+	printf("\033[1ADone \%d : %d \n", data_size, data_size);
 	//cout << "have done 100%" << endl;
 	transcriptome_file.close();			
 	cout << splicing_graph_id << " graphs have been built." << endl;
@@ -303,8 +297,7 @@ int main(int argc, char* argv[]){
 	}
 
 	delete_error_reads(input_data);
-	KmerHash kmer_hash(g_kmer_length);
-	write_all_splicing_graph(kmer_hash);
+	write_all_splicing_graph();
 	time_t e_time = time(NULL);
 	cout << "Success! (total cost time: " << (e_time - s_time) << " s)" << endl;
 	return 1;

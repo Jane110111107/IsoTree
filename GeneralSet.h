@@ -1,3 +1,8 @@
+// This file was modified from a file named common.h in Binpack.
+// The original copyright info is Copyright (c) 2013, The Broad Institute, Inc.
+// Distributed under the  Distributed under Binpack Software LICENSE.
+
+
 
 #ifndef GENERALSET_H
 #define GENERALSET_H
@@ -12,19 +17,21 @@
 
 using namespace std;
 
-extern vector<int> data_tag;
 extern vector<string> data;
-extern vector<bool> data_used;
-extern int max_read_id;
+extern vector<int> data_tag;
+extern vector<int> data_cov;
+extern vector<vector<int> > data_pair;
+extern int g_divide_left_pos;
+extern int g_divide_right_pos;
 extern double g_max_mapped_error;
 extern int g_mode;
-extern int g_kmer_length;
 extern bool g_help;
 extern bool g_debug;
 extern bool g_double_stranded_mode;
 extern bool g_is_paired_end;
 extern string out_dir;
 extern int g_fr_strand;
+extern int g_kmer_length;
 extern int g_min_same_len;
 extern int g_max_same_len;
 extern int g_max_check_len;
@@ -72,7 +79,7 @@ extern string output_filename;
 
 
 #define OPT_MIN_SAME_LEN		301
-#define OPT_MAX_SAME_LEN		302
+#define OPT_MODE		302
 #define OPT_DOUBLE_STRANDED_MODE		303
 #define OPT_FR_STRAND		304
 #define	OPT_TOLERANCE_VALUE	305
@@ -80,8 +87,8 @@ extern string output_filename;
 #define OPT_MIN_EXON_LEN		307
 #define OPT_LEFT		308
 #define OPT_RIGHT	309
-#define OPT_SINGLEFILE			311
-#define OPT_MODE	312
+#define OPT_SINGLEFILE			310
+#define OPT_MAX_SAME_LEN		311
 
 
 

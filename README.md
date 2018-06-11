@@ -1,5 +1,7 @@
-form# IsoTree
+# IsoTree
 IsoTree: A New Framework for De Novo Transcriptome Assembly from RNA-seq Reads
+
+version 1.1
 
 ** Description **
 

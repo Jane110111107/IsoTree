@@ -57,6 +57,6 @@ Download link http://pan.baidu.com/s/1misseHa.
 
 ** Contact information **
 
-If you have any questions or concerns, please send email to zhaojin_cc@163.com.
+If you have any questions or concerns, please send email to zhaojin@mail.sdu.edu.cn.
 	
 
